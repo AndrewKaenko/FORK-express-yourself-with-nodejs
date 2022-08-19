@@ -1,20 +1,56 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const { saveName } = require("../services/user.service");
-const { isAuthorized } = require("../middlewares/auth.middleware");
+const {
+  listFighters,
+  findFighter,
+  createFighter,
+  updateFighter,
+  deleteFighter,
+} = require("../services/user.service");
 
-router.get('/', function(req, res, next) {
-  res.send(`Welcome!`);
+router.get("/", async (req, res) => {
+  const result = await listFighters();
+  if (result) {
+    res.send(result);
+  } else {
+    res.sendStatus(500);
+  }
 });
 
-router.post('/', isAuthorized, function(req, res, next) {
-  const result = saveName(req.body);
-
+router.get("/:id", async (req, res) => {
+  const result = await findFighter(req.params.id);
   if (result) {
-    res.send(`Your name is ${result}`);
+    res.send(result);
   } else {
-    res.status(400).send(`Some error`);
+    res.sendStatus(500);
+  }
+});
+
+router.post("/", async (req, res) => {
+  const result = await createFighter(req.body);
+  if (result) {
+    res.send(result);
+  } else {
+    res.sendStatus(500);
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const result = await updateFighter(req.params.id, req.body);
+  if (result) {
+    res.send(result);
+  } else {
+    res.sendStatus(500);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const result = await deleteFighter(req.params.id);
+  if (result) {
+    res.send(result);
+  } else {
+    res.send(500);
   }
 });
 
